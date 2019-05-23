@@ -22,7 +22,7 @@ typedef struct {
 void creaHvacio(char *fichHash);
 int leeHash(char *fichHash);
 // funciones a codificar
-int creaHash(char *fichEntrada,char *fichHash);
+int creaHash(char *fichEntrada,char *fichHash);//#
 int buscaReg(FILE *fHash, tipoAlumno *reg,char *dni);
 int desborde(FILE *fHash, tipoAlumno *reg);
 
