@@ -13,6 +13,7 @@ int modificarReg(char *fichero, char *dni, char *provincia){
     int seed;
     int bloq;
     int bloqActual = 0;
+    int found=0;
     //abrirArchivoFichero
     f = fopen(fichero,"rb");
     rewind(f);
@@ -20,34 +21,40 @@ int modificarReg(char *fichero, char *dni, char *provincia){
     seed = atoi(dni);
     //obtenemos cubo del dato
     bloq = seed % CUBOS;
-    //iniciamos lectura
-    fread(&cubo,sizeof(cubo),1,f);//cargo el buffer
-    while (!feof(f)){//leo hasta final fichero
-    if(bloqActual==bloq){
-        if(bloq<CUBOS){
-            for(y = 0; y<C;y++){
-                if(!strcmp(cubo.reg[y].dni, dni)){
-                cubo->reg[y].provincia=provincia;//PROBLEMa
-                return bloq;
-                } 
-            }
-        }else if(bloq>=CUBOS){
-            for(y = 0; y<CUBOSDESBORDE*C;y++){
-                if(!strcmp(cubo.reg[y].dni, dni)){
-                cubo->reg[y].provincia=provincia;//PROBLEMa
-                return bloq;
-                }
-            }
-        }
-        if(cubo.numRegAsignados>C){
-                bloq=CUBOS;
+    //buscamos cubo
+    fseek( f, sizeof(tipoCubo)*seed, SEEK_SET );
+    fread( &cubo, sizeof(tipoCubo), 1, f );
+
+    if(cubo.numRegAsignados<=C){//no existe desborde
+    for(y=0;y<C;y++){
+        if(!strcmp(cubo.reg[y].dni, dni)){
+            memcpy(&cubo.reg[y].provincia, provincia , sizeof(provincia));
+            return bloq;
         }
     }
-    
-    bloqActual++;
+    return -1;//al no haber desvorde termiona la busqueda
+    }else if(cubo.numRegAsignados>C){//exixte desborde
+
+    while(found==0){
+        fseek( f, sizeof(tipoCubo)*(CUBOS+x), SEEK_SET );
+        fread( &cubo, sizeof(tipoCubo), 1, f );
+        for(y=0;y<C;y++){
+            if(!strcmp(cubo.reg[y].dni, dni)){
+                memcpy(&cubo.reg[y].provincia, provincia , sizeof(provincia));
+                return bloq;
+            }
+        }
+        if(CUBOS+x>CUBOS+CUBOSDESBORDE){
+            return-1;
+        }
+        x++;
     }
+
+    }
+
+
 
 
 fclose(f);
-return -1; 
+return 0; 
 }
