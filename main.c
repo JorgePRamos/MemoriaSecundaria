@@ -39,6 +39,8 @@ int modificarReg(char *fichero, char *dni, char *provincia){
                     return bloq;
                 }
             }
+            if(cubo.numRegAsignados<=C ) break;//No hay más desborde.
+
             if(CUBOS+x>CUBOS+CUBOSDESBORDE){
                 fclose(f);
                 return-1;
