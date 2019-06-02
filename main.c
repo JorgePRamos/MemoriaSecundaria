@@ -12,14 +12,14 @@ int modificarReg(char *fichero, char *dni, char *provincia){
     int seed;
     int bloq;
     //abrirArchivoFichero
-    f = fopen(fichero,"rb");
+    f = fopen(fichero,"rb+");
     rewind(f);
     //dni a int
     seed = atoi(dni);
     //obtenemos cubo del dato
     bloq = seed % CUBOS;
     //buscamos cubo
-    fseek( f, sizeof(tipoCubo)*seed, SEEK_SET );
+    fseek( f, sizeof(tipoCubo)*bloq, SEEK_SET );
     fread( &cubo, sizeof(tipoCubo), 1, f );
     for(y=0;y<C;y++){
         if(!strcmp(cubo.reg[y].dni, dni)){
